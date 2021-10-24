@@ -3,21 +3,19 @@ import numpy as np
 import io
 
 
-# array compression code borrowed from asterio gonzalez response on https://stackoverflow.com/questions/18621513/python-insert-numpy-array-into-sqlite3-database
-compressor = 'zlib'
+# array compression code borrowed from unutbu response on https://stackoverflow.com/questions/18621513/python-insert-numpy-array-into-sqlite3-database
 
 
 def adapt_array(arr):
     out = io.BytesIO()
     np.save(out, arr)
     out.seek(0)
-    return sqlite3.Binary(out.read().encode(compressor))  # zlib, bz2
+    return sqlite3.Binary(out.read()) 
 
 
 def convert_array(text):
     out = io.BytesIO(text)
     out.seek(0)
-    out = io.BytesIO(out.read().decode(compressor))
     return np.load(out)
 
 
@@ -40,11 +38,12 @@ class DatabaseHandler():
             category text,
             title text,
             price text,
+            url text,
             image array
         )""")
 
-    def put(self, brand, category, title, price, image):
-        self.c.execute("INSERT INTO products VALUES (?, ?, ?, ?, ?)", (brand, category, title, price, image))
+    def put(self, brand, category, title, price, url, image):
+        self.c.execute("INSERT INTO products VALUES (?, ?, ?, ?, ?, ?)", (brand, category, title, price, url, image))
         self.conn.commit()
 
     def find(self, brand):
@@ -56,10 +55,11 @@ class DatabaseHandler():
             data[entry[1]].append({
                 "title": entry[2],
                 "price": entry[3],
-                "image": entry[4],
+                "link": entry[4],
+                "image": entry[5]
             })
         return data
 
     def close(self):
-        self.conn.close()
         self.c.close()
+        self.conn.close()

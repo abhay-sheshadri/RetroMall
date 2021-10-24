@@ -1,4 +1,10 @@
-API_KEY = "enter your api key"
+API_KEY = #
 
-HORIZONTAL = 25
-VERTICAL = 25
+HORIZONTAL = 47
+VERTICAL = 27
+
+INFURA_URL = #
+
+# MetaMask info
+ADDRESS = #
+PRIVATE_KEY = #
